@@ -1,0 +1,142 @@
+/* General Table Styling */
+.wp-list-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.wp-list-table thead th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+  padding: 12px;
+  text-align: left;
+  border-bottom: 2px solid #e2e2e2;
+  position: relative;
+}
+
+.wp-list-table th,
+.wp-list-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e2e2e2;
+}
+
+/* Styling for Striped Rows */
+.wp-list-table tbody tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+/* Styling for Hover Effect */
+.wp-list-table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Search Input Styling */
+.wp-list-table input.column-search {
+  width: 100%;
+  padding: 5px;
+  margin-top: 5px;
+  box-sizing: border-box;
+}
+
+/* Sort Column Links Styling */
+.wp-list-table a.sort-column {
+  color: #0073aa;
+  text-decoration: none;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.wp-list-table a.sort-column:hover {
+  color: #00a0d2;
+}
+
+.wp-list-table a.sort-column:after {
+  content: "\25B2"; /* Default sort arrow (upward triangle) */
+  font-size: 10px;
+  margin-left: 5px;
+}
+
+.wp-list-table a.sort-column[data-order="DESC"]:after {
+  content: "\25BC"; /* Downward triangle when sorting desc */
+}
+
+/* Adding Padding to Inputs for Better Usability */
+.wp-list-table input[type="text"] {
+  padding: 5px;
+  font-size: 14px;
+}
+
+/* Table Responsiveness */
+@media screen and (max-width: 768px) {
+  .wp-list-table thead {
+    display: none;
+  }
+
+  .wp-list-table tr {
+    display: block;
+    margin-bottom: 15px;
+  }
+
+  .wp-list-table td {
+    display: block;
+    text-align: right;
+    border: none;
+    position: relative;
+    padding-left: 50%;
+  }
+
+  .wp-list-table td::before {
+    content: attr(data-title);
+    position: absolute;
+    left: 10px;
+    text-align: left;
+    font-weight: bold;
+  }
+
+  .wp-list-table input.column-search {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 10px;
+  }
+}
+
+/* Loader Container */
+.ajax-loader {
+  display: none; /* Hidden by default */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent overlay */
+  z-index: 9999; /* Make sure it's above everything else */
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+
+/* Loader Animation */
+.ajax-loader .loader {
+  border: 8px solid #f3f3f3; /* Light grey */
+  border-top: 8px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+}
+
+/* Keyframes for Loader Animation */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.column-filter {
+  margin-top: 5px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 5px;
+}
