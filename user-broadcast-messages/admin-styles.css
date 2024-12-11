@@ -1,0 +1,70 @@
+.wrap {
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 700px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.wrap h1 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.wrap form label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #444;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.wrap form input[type="text"],
+.wrap form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.wrap form select {
+    cursor: pointer;
+    background-color: #f9f9f9;
+}
+
+.wrap form input[type="text"]:focus,
+.wrap form select:focus {
+    border-color: #0073aa;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 115, 170, 0.5);
+}
+
+.wrap form .wp-editor-area {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.wrap form input[type="submit"] {
+    background-color: #0073aa;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.wrap form input[type="submit"]:hover {
+    background-color: #005f8d;
+}   

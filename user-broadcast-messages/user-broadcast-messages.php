@@ -3,12 +3,17 @@
  * Plugin Name: User Broadcast Messages
  * Description: Send broadcast messages to all users.
  * Version: 1.0
- * Author: Your Name
+ * Author: Webtech Evolution
  * License: GPL2
  */
 
 // Security check to ensure the file is being called within WordPress
 defined('ABSPATH') or die('No script kiddies please!');
+add_action('admin_enqueue_scripts', 'ubm_enqueue_custom_admin_styles');
+function ubm_enqueue_custom_admin_styles()
+{
+    wp_enqueue_style('ubm-admin-styles', plugin_dir_url(__FILE__) . 'admin-styles.css');
+}
 
 // Add an admin menu for sending broadcast messages
 function ubm_add_admin_menu()
@@ -31,6 +36,22 @@ function ubm_broadcast_message_form()
     ?>
     <div class="wrap">
         <h1>Send Broadcast Message</h1>
+        <label for="ubm_membership_level">Select Membership Level:</label>
+        <select name="ubm_membership_level" id="ubm_membership_level">
+            <option value="0">All Users</option> <!-- Option to send to all users -->
+            <?php
+            // Get the membership levels from PMPro
+            if (function_exists('pmpro_getAllLevels')) {
+                $levels = pmpro_getAllLevels(); // Fetch all levels
+                foreach ($levels as $level) {
+                    echo '<option value="' . esc_attr($level->id) . '">' . esc_html($level->name) . '</option>';
+                }
+            } else {
+                echo '<option value="">No Membership Levels Found</option>';
+            }
+            ?>
+        </select>
+        <br><br>
         <form method="post" action="">
             <label for="ubm_subject">Subject:</label>
             <input type="text" name="ubm_subject" id="ubm_subject" placeholder="Enter subject..." class="regular-text">
@@ -49,24 +70,7 @@ function ubm_broadcast_message_form()
             );
             wp_editor($content, $editor_id, $settings);
             ?>
-            <br><br>
 
-            <label for="ubm_membership_level">Select Membership Level:</label>
-            <select name="ubm_membership_level" id="ubm_membership_level">
-                <option value="0">All Users</option> <!-- Option to send to all users -->
-                <?php
-                // Get the membership levels from PMPro
-                if (function_exists('pmpro_getAllLevels')) {
-                    $levels = pmpro_getAllLevels(); // Fetch all levels
-                    foreach ($levels as $level) {
-                        echo '<option value="' . esc_attr($level->id) . '">' . esc_html($level->name) . '</option>';
-                    }
-                } else {
-                    echo '<option value="">No Membership Levels Found</option>';
-                }
-                ?>
-            </select>
-            <br><br>
             <input type="submit" name="ubm_send_message" value="Send Message" class="button button-primary">
         </form>
     </div>
