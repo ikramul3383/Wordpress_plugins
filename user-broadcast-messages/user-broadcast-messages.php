@@ -3,7 +3,7 @@
  * Plugin Name: User Broadcast Messages
  * Description: Send broadcast messages to all users.
  * Version: 1.0
- * Author: Webtech Evolution
+ * Author: Ikramul Shekh
  * License: GPL2
  */
 
