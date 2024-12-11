@@ -1024,11 +1024,85 @@ function ajax_delete_account_number()
 add_action('wp_ajax_delete_account_number', 'ajax_delete_account_number');
 
 
-
 //generate coupon code dynamically
 
 add_action('wp_ajax_generate_coupon_code', 'generate_coupon_code');
 add_action('wp_ajax_nopriv_generate_coupon_code', 'generate_coupon_code');
+// Add Admin Menu Page
+function quiz_discount_settings_page()
+{
+    add_menu_page(
+        'Quiz Discount Settings',
+        'Quiz Discounts',
+        'manage_options',
+        'quiz-discount-settings',
+        'quiz_discount_settings_callback'
+    );
+}
+add_action('admin_menu', 'quiz_discount_settings_page');
+
+// Settings Page Callback
+function quiz_discount_settings_callback()
+{
+    // Handle form submission
+    if (isset($_POST['quiz_discount_settings_nonce']) && wp_verify_nonce($_POST['quiz_discount_settings_nonce'], 'quiz_discount_settings')) {
+        $score_ranges = array_map('sanitize_text_field', $_POST['score_ranges']);
+        $discounts = array_map('floatval', $_POST['discounts']);
+        $settings = array_combine($score_ranges, $discounts);
+        update_option('quiz_discount_settings', $settings);
+        echo '<div class="updated"><p>Settings saved successfully!</p></div>';
+    }
+
+    // Get existing settings
+    $settings = get_option('quiz_discount_settings', []);
+    ?>
+
+    <div class="wrap">
+        <h1>Quiz Discount Settings</h1>
+        <form method="POST">
+            <?php wp_nonce_field('quiz_discount_settings', 'quiz_discount_settings_nonce'); ?>
+            <table class="form-table">
+                <thead>
+                    <tr>
+                        <th>Score Range (e.g., 80-100)</th>
+                        <th>Discount Percentage</th>
+                    </tr>
+                </thead>
+                <tbody id="discount-settings-rows">
+                    <?php if (!empty($settings)): ?>
+                        <?php foreach ($settings as $range => $discount): ?>
+                            <tr>
+                                <td><input type="text" name="score_ranges[]" value="<?php echo esc_attr($range); ?>" required></td>
+                                <td><input type="number" name="discounts[]" value="<?php echo esc_attr($discount); ?>" required>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td><input type="text" name="score_ranges[]" required></td>
+                            <td><input type="number" name="discounts[]" required></td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+            <button type="button" id="add-row">Add Row</button>
+            <br><br>
+            <input type="submit" class="button-primary" value="Save Settings">
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('add-row').addEventListener('click', function () {
+            const tbody = document.getElementById('discount-settings-rows');
+            const row = `<tr>
+                        <td><input type="text" name="score_ranges[]" required></td>
+                        <td><input type="number" name="discounts[]" required></td>
+                    </tr>`;
+            tbody.insertAdjacentHTML('beforeend', row);
+        });
+    </script>
+    <?php
+}
 
 function generate_coupon_code()
 {
@@ -1037,28 +1111,32 @@ function generate_coupon_code()
         return;
     }
 
-
     // Retrieve data from the AJAX request
     $username = sanitize_text_field($_POST['username']);
     $usercontact = sanitize_text_field($_POST['usercontact']);
     $score = floatval($_POST['score']);
 
-    // Generate unique coupon code using the first 4 letters of username and contact
-    $username_part = substr($username, 0, 4);
-    $contact_part = substr($usercontact, 0, 4);
-    $coupon_code = strtoupper($username_part . $contact_part);
+    // Retrieve discount settings
+    $settings = get_option('quiz_discount_settings', []);
+    $discount = 0;
 
-    // Determine discount based on score
-    if ($score > 80) {
-        $discount = 50;
-    } elseif ($score >= 70) {
-        $discount = 45;
-    } elseif ($score >= 50) {
-        $discount = 10;
-    } else {
+    foreach ($settings as $range => $percent) {
+        [$min, $max] = array_map('floatval', explode('-', $range));
+        if ($score >= $min && $score <= $max) {
+            $discount = $percent;
+            break;
+        }
+    }
+
+    if ($discount === 0) {
         wp_send_json_error(['message' => 'Score too low for a coupon']);
         return;
     }
+
+    // Generate unique coupon code
+    $username_part = substr($username, 0, 4);
+    $contact_part = substr($usercontact, 0, 4);
+    $coupon_code = strtoupper($username_part . $contact_part);
 
     // Check if the coupon already exists
     if (get_page_by_title($coupon_code, OBJECT, 'shop_coupon')) {
@@ -1088,7 +1166,7 @@ function generate_coupon_code()
 
         wp_send_json_success([
             'coupon_code' => $coupon_code,
-            'discount' => $discount // Add discount percentage to the response
+            'discount' => $discount
         ]);
     } else {
         wp_send_json_error(['message' => 'Failed to create coupon']);
