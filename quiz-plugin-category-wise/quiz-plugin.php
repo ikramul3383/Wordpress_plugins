@@ -3,7 +3,7 @@
 Plugin Name: Quiz Plugin
 Description: A WordPress plugin to create and manage quizzes.
 Version: 1.0
-Author: Ikramul Shekh
+Author: Ikramul Shekh 
 */
 
 // Register Quiz Question Custom Post Type
